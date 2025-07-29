@@ -1,3 +1,5 @@
+/* ==== MENU SUPERIOR ==== */
+
 .menuBar {
   background: linear-gradient(90deg, #355cdb 0%, #4f8cff 100%);
   padding: 0;
@@ -7,6 +9,18 @@
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+.menu-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+
+.menu-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .menuInner {
@@ -91,11 +105,13 @@
   box-shadow: 0 2px 10px #f66d6d33;
   transition: background .14s, box-shadow .17s;
 }
+
 .logoutBtn:hover {
   background: #e04444;
   box-shadow: 0 2px 14px #e44a2b29;
 }
 
+/* ==== RESPONSIVIDADE DO MENU ==== */
 @media (max-width: 800px) {
   .menuInner {
     flex-direction: column;
@@ -113,5 +129,45 @@
   .logoutBtn {
     padding: 7px 14px;
     font-size: 0.93rem;
+  }
+}
+
+/* ==== CARDS DE TREINO ==== */
+
+.treino-card {
+  margin-bottom: 1.2rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.data-hora {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #1a1a1a;
+  margin-bottom: 0.3rem;
+}
+
+.metodologia-box {
+  background-color: #f0f4ff;
+  color: #333;
+  padding: 0.5rem;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+}
+
+/* Botões Editar / Remover */
+
+.botoes-treino {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+@media (min-width: 600px) {
+  .botoes-treino {
+    flex-direction: row;
   }
 }

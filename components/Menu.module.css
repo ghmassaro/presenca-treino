@@ -1,5 +1,5 @@
-:root {
-  /* Paleta de cores da marca */
+/*root {
+ 
   --menu-bg: #0f172a;
   --link-color: #f2932e;
   --link-hover-bg: rgba(242,147,46,0.1);
@@ -7,7 +7,7 @@
   --text-light: #fefefe;
   --shadow: rgba(0,0,0,0.15);
 }
-
+ */
 .menuBar {
   position: sticky;
   top: 0;
@@ -56,7 +56,7 @@
   white-space: nowrap;
 }
 
-/* Esconde scrollbars */
+
 .links::-webkit-scrollbar { display: none; }
 .links { -ms-overflow-style: none; scrollbar-width: none; }
 

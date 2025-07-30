@@ -90,193 +90,88 @@ export default function Pagamento() {
     setTimeout(() => setUploadMsg(""), 1200);
   }
 
-  if (loading) return <div className="container card" style={{ padding: 30 }}>Carregando...</div>;
-  if (!user) return <div className="container card" style={{ padding: 30 }}>Faça login para acessar!</div>;
+  if (loading) return <div className="container mt-5">Carregando...</div>;
+  if (!user) return <div className="container mt-5">Faça login para acessar!</div>;
 
   return (
-    <div className="container" style={{ minHeight: "100vh", paddingTop: 32 }}>
-      <div className="card" style={{ maxWidth: 530, margin: "0 auto" }}>
-        <h1 style={{ textAlign: "center", color: "#2563eb", fontWeight: "bold", letterSpacing: ".05em", fontSize: 22, marginBottom: 20 }}>Área de Pagamento</h1>
-        {uploadMsg && <div style={{ color: "#2563eb", margin: 12, textAlign: "center" }}>{uploadMsg}</div>}
+    <div className="container py-4">
+      <div className="card mx-auto" style={{ maxWidth: "600px" }}>
+        <div className="card-body">
+          <h3 className="text-center text-primary mb-3">Área de Pagamento</h3>
+          {uploadMsg && <div className="alert alert-info text-center">{uploadMsg}</div>}
 
-        {adminView ? (
-          <div>
-            <h2 style={{ fontSize: "1.1rem", margin: "24px 0 16px 0", color: "#377f38" }}>Pagamentos dos Alunos</h2>
-            {alunos.map((al) => (
-              <div key={al.id} className="card" style={{ background: "#f7f9fc", marginBottom: 18 }}>
-                <div style={{ fontWeight: 700, fontSize: 18, color: "#255" }}>
-                  {al.nome}
-                  <span style={{ fontWeight: 400, fontSize: 13, color: "#888" }}> &nbsp;({al.email})</span>
+          {adminView ? (
+            <>
+              <h5 className="text-success mb-3">Pagamentos dos Alunos</h5>
+              {alunos.map((al) => (
+                <div className="card mb-3" key={al.id}>
+                  <div className="card-body">
+                    <h5 className="card-title">{al.nome} <small className="text-muted">({al.email})</small></h5>
+                    <p><strong>Valor:</strong> R$ {al.valor || "80,00"}</p>
+                    <p><strong>Aulas/mês:</strong> {al.vezes || "1x"}</p>
+                    <p><strong>Vencimento:</strong> {formatDateBR(al.pagamento)}</p>
+                    <p><strong>Chave PIX:</strong> {al.pix || "Sem chave"}</p>
+                    <p>
+                      <strong>Status:</strong> {" "}
+                      <span className={`badge ${al.status === "Pago" ? "bg-success" : al.status === "Aguardando Confirmação" ? "bg-warning text-dark" : "bg-danger"}`}>{al.status || "Pendente"}</span>
+                    </p>
+                    {al.comprovante && <p><i>Comprovante:</i> {al.comprovante}</p>}
+                    <div className="d-flex flex-wrap gap-2">
+                      <select className="form-select w-auto" value={al.status || "Pendente"} onChange={e => handleStatus(al.id, e.target.value)}>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Aguardando Confirmação">Aguardando Confirmação</option>
+                        <option value="Pago">Pago</option>
+                      </select>
+                      <button className={`btn ${editId === al.id ? "btn-secondary" : "btn-primary"}`} onClick={() => editId === al.id ? setEditId(null) : startEdit(al)}>
+                        {editId === al.id ? "Cancelar" : "Editar dados"}
+                      </button>
+                    </div>
+                    {editId === al.id && (
+                      <form className="mt-3" onSubmit={ev => { ev.preventDefault(); salvarEdicao(al.id); }}>
+                        <div className="row g-2">
+                          <div className="col">
+                            <input className="form-control" type="text" placeholder="Valor (R$)" value={editFields.valor} onChange={e => setEditFields(f => ({ ...f, valor: e.target.value }))} />
+                          </div>
+                          <div className="col">
+                            <input className="form-control" type="text" placeholder="Aulas/Mês" value={editFields.vezes} onChange={e => setEditFields(f => ({ ...f, vezes: e.target.value }))} />
+                          </div>
+                          <div className="col">
+                            <input className="form-control" type="date" value={editFields.pagamento} onChange={e => setEditFields(f => ({ ...f, pagamento: e.target.value }))} />
+                          </div>
+                          <div className="col">
+                            <input className="form-control" type="text" placeholder="PIX" value={editFields.pix} onChange={e => setEditFields(f => ({ ...f, pix: e.target.value }))} />
+                          </div>
+                        </div>
+                        <button type="submit" className="btn btn-success mt-3">Salvar</button>
+                      </form>
+                    )}
+                  </div>
                 </div>
-                <div style={{ margin: "7px 0", fontSize: 17 }}>
-                  <span style={{ color: "#2563eb", fontWeight: 700 }}>Valor:</span> <span style={{ color: "#111", fontSize: 21, fontWeight: 700 }}>R$ {al.valor || "80,00"}</span>
-                </div>
-                <div style={{ margin: "7px 0" }}>
-                  <span style={{ color: "#2563eb", fontWeight: 700 }}>Aulas/mês:</span> {al.vezes || "1x"}
-                </div>
-                <div style={{ margin: "7px 0" }}>
-                  <span style={{ color: "#2563eb", fontWeight: 700 }}>Vencimento:</span> {formatDateBR(al.pagamento)}
-                </div>
-                <div style={{ margin: "7px 0" }}>
-                  <span style={{ color: "#2563eb", fontWeight: 700 }}>Chave PIX:</span> <span style={{ fontFamily: "monospace", fontSize: 16, color: "#27499f" }}>{al.pix || "Sem chave"}</span>
-                </div>
-                <div style={{ margin: "7px 0" }}>
-                  <span style={{ color: "#2563eb", fontWeight: 700 }}>Status:</span>
-                  <span style={{
-                    fontWeight: 600,
-                    padding: "2px 16px",
-                    borderRadius: 15,
-                    color: al.status === "Pago" ? "#138a13" : (al.status === "Aguardando Confirmação" ? "#b78100" : "#b53c00"),
-                    background: al.status === "Pago"
-                      ? "#c9f8d6"
-                      : al.status === "Aguardando Confirmação"
-                        ? "#fef5cc"
-                        : "#ffe5e2",
-                    marginLeft: 8
-                  }}>
-                    {al.status || "Pendente"}
-                  </span>
-                </div>
-                {al.comprovante && <div style={{ fontSize: 13, color: "#377f38", marginBottom: 5 }}>Comprovante: <i>{al.comprovante}</i></div>}
-                <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                  <select value={al.status || "Pendente"} onChange={e => handleStatus(al.id, e.target.value)}>
-                    <option value="Pendente">Pendente</option>
-                    <option value="Aguardando Confirmação">Aguardando Confirmação</option>
-                    <option value="Pago">Pago</option>
-                  </select>
-                  <button
-                    onClick={() => editId === al.id ? setEditId(null) : startEdit(al)}
-                    style={{
-                      background: editId === al.id ? "#bbb" : "#2563eb",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: 6,
-                      fontSize: 13,
-                      padding: "5px 13px",
-                      cursor: "pointer"
-                    }}>
-                    {editId === al.id ? "Cancelar" : "Editar dados"}
-                  </button>
-                </div>
-                {editId === al.id && (
-                  <form
-                    onSubmit={ev => {
-                      ev.preventDefault();
-                      salvarEdicao(al.id);
-                    }}
-                    style={{
-                      marginTop: 14,
-                      background: "#eaf1ff",
-                      borderRadius: 9,
-                      padding: 9,
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 8
-                    }}
-                  >
-                    <label>Valor (R$):<input
-                      type="text"
-                      value={editFields.valor}
-                      onChange={e => setEditFields(f => ({ ...f, valor: e.target.value }))}
-                      style={{ padding: 7, borderRadius: 6, border: "1px solid #ddd", fontSize: 15, width: 120, marginLeft: 5 }}
-                    /></label>
-                    <label>Aulas/Mês:<input
-                      type="text"
-                      value={editFields.vezes}
-                      onChange={e => setEditFields(f => ({ ...f, vezes: e.target.value }))}
-                      style={{ padding: 7, borderRadius: 6, border: "1px solid #ddd", fontSize: 15, width: 120, marginLeft: 5 }}
-                    /></label>
-                    <label>Vencimento:<input
-                      type="date"
-                      value={editFields.pagamento}
-                      onChange={e => setEditFields(f => ({ ...f, pagamento: e.target.value }))}
-                      style={{ padding: 7, borderRadius: 6, border: "1px solid #ddd", fontSize: 15, width: 120, marginLeft: 5 }}
-                    /></label>
-                    <label>Chave PIX:<input
-                      type="text"
-                      value={editFields.pix}
-                      onChange={e => setEditFields(f => ({ ...f, pix: e.target.value }))}
-                      style={{ padding: 7, borderRadius: 6, border: "1px solid #ddd", fontSize: 15, width: 120, marginLeft: 5 }}
-                    /></label>
-                    <button
-                      type="submit"
-                      style={{
-                        fontSize: 15,
-                        padding: "7px 18px",
-                        borderRadius: 6,
-                        background: "#377f38",
-                        color: "#fff",
-                        fontWeight: 700,
-                        border: "none",
-                        marginTop: 4
-                      }}>
-                      Salvar
-                    </button>
+              ))}
+            </>
+          ) : (
+            dados && (
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title text-primary">Olá, {dados.nome}!</h5>
+                  <p><strong>Valor:</strong> R$ {dados.valor || "80,00"}</p>
+                  <p><strong>Aulas/mês:</strong> {dados.vezes || "1x"}</p>
+                  <p><strong>Vencimento:</strong> {formatDateBR(dados.pagamento)}</p>
+                  <p><strong>Chave PIX:</strong> {dados.pix || "Sem chave"}</p>
+                  <p><strong>Status:</strong> <span className={`badge ${dados.status === "Pago" ? "bg-success" : dados.status === "Aguardando Confirmação" ? "bg-warning text-dark" : "bg-danger"}`}>{dados.status || "Pendente"}</span></p>
+                  {dados.comprovante && <p><i>Comprovante:</i> {dados.comprovante}</p>}
+                  <form onSubmit={handleUpload} className="mt-3">
+                    <div className="mb-2">
+                      <label className="form-label">Enviar comprovante:</label>
+                      <input className="form-control" type="file" accept="image/*,application/pdf" onChange={e => setComprovante(e.target.files[0])} />
+                    </div>
+                    <button type="submit" className="btn btn-primary w-100">Enviar comprovante</button>
                   </form>
-                )}
+                </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <>
-            {dados && (
-              <div className="card" style={{ background: "#f7f9fc", maxWidth: 450, margin: "0 auto" }}>
-                <div style={{ fontWeight: 700, fontSize: 19, color: "#2563eb", marginBottom: 6 }}>
-                  Olá, {dados.nome}!
-                </div>
-                <div style={{ margin: "7px 0", fontSize: 17 }}>
-                  <span style={{ color: "#2563eb", fontWeight: 700 }}>Valor:</span> <span style={{ color: "#111", fontSize: 21, fontWeight: 700 }}>R$ {dados.valor || "80,00"}</span>
-                </div>
-                <div style={{ margin: "7px 0" }}>
-                  <span style={{ color: "#2563eb", fontWeight: 700 }}>Aulas/mês:</span> {dados.vezes || "1x"}
-                </div>
-                <div style={{ margin: "7px 0" }}>
-                  <span style={{ color: "#2563eb", fontWeight: 700 }}>Vencimento:</span> {formatDateBR(dados.pagamento)}
-                </div>
-                <div style={{ margin: "7px 0" }}>
-                  <span style={{ color: "#2563eb", fontWeight: 700 }}>Chave PIX:</span> <span style={{ fontFamily: "monospace", fontSize: 16, color: "#27499f" }}>{dados.pix || "Sem chave"}</span>
-                </div>
-                <div style={{ margin: "7px 0" }}>
-                  <span style={{ color: "#2563eb", fontWeight: 700 }}>Status:</span>
-                  <span style={{
-                    fontWeight: 600,
-                    padding: "2px 16px",
-                    borderRadius: 15,
-                    color: dados.status === "Pago" ? "#138a13" : (dados.status === "Aguardando Confirmação" ? "#b78100" : "#b53c00"),
-                    background: dados.status === "Pago"
-                      ? "#c9f8d6"
-                      : dados.status === "Aguardando Confirmação"
-                        ? "#fef5cc"
-                        : "#ffe5e2",
-                    marginLeft: 8
-                  }}>
-                    {dados.status || "Pendente"}
-                  </span>
-                  {dados.status === "Pago" && <span style={{ marginLeft: 10, color: "green", fontWeight: 500 }}>✅ Pagamento Confirmado</span>}
-                </div>
-                {dados.comprovante && <div style={{ color: "#377f38", fontSize: 14 }}>Comprovante enviado: <i>{dados.comprovante}</i></div>}
-                <form onSubmit={handleUpload} style={{ marginTop: 14 }}>
-                  <label style={{ fontWeight: 500, color: "#444" }}>
-                    Enviar comprovante:
-                    <input
-                      type="file"
-                      accept="image/*,application/pdf"
-                      onChange={e => setComprovante(e.target.files[0])}
-                      style={{
-                        display: "block", margin: "7px 0 0 0", fontSize: 15
-                      }}
-                    />
-                  </label>
-                  <button
-                    className="button success"
-                    style={{ width: 180, marginTop: 9, fontSize: 16, background: "#2563eb" }}
-                  >Enviar comprovante</button>
-                </form>
-              </div>
-            )}
-            {!dados && <div style={{ margin: "40px 0", textAlign: "center" }}>Cadastro não encontrado.<br />Fale com o professor.</div>}
-          </>
-        )}
+            )
+          )}
+        </div>
       </div>
     </div>
   );

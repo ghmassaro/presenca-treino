@@ -7,31 +7,21 @@ import {
   orderBy,
   where,
   deleteDoc,
-  doc
+  doc,
 } from "firebase/firestore";
-
-function formatDateBR(dateString) {
-  if (!dateString) return "";
-  const [year, month, day] = dateString.split("-");
-  return `${day}/${month}/${year}`;
-}
 
 export default function Painel() {
   const [treinos, setTreinos] = useState([]);
   const [presencas, setPresencas] = useState({});
   const [alunos, setAlunos] = useState([]);
-  const [treinoSelecionado, setTreinoSelecionado] = useState(null);
+  const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchTreinos() {
       const q = query(collection(db, "treinos"), orderBy("dia"));
-      const snapshot = await getDocs(q);
-      const lista = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTreinos(lista);
+      const snap = await getDocs(q);
+      setTreinos(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     }
     fetchTreinos();
   }, []);
@@ -39,157 +29,81 @@ export default function Painel() {
   useEffect(() => {
     async function fetchAlunos() {
       const q = query(collection(db, "alunos"), orderBy("nome"));
-      const snapshot = await getDocs(q);
-      setAlunos(snapshot.docs.map((doc) => doc.data()));
+      const snap = await getDocs(q);
+      setAlunos(snap.docs.map(d => d.data()));
     }
     fetchAlunos();
   }, []);
 
-  async function verPresencas(treinoId) {
+  async function viewPresencas(id) {
     setLoading(true);
-    const q = query(collection(db, "presencas"), where("treinoId", "==", treinoId));
-    const snapshot = await getDocs(q);
-    setPresencas({
-      ...presencas,
-      [treinoId]: snapshot.docs.map((doc) => ({ ...doc.data(), _id: doc.id })),
-    });
-    setTreinoSelecionado(treinoId);
+    const q = query(collection(db, "presencas"), where("treinoId", "==", id));
+    const snap = await getDocs(q);
+    setPresencas(prev => ({ ...prev, [id]: snap.docs.map(d => ({ _id: d.id, ...d.data() })) }));
+    setSelected(id);
     setLoading(false);
   }
 
-  async function removerPresenca(docId, treinoId) {
-    if (!window.confirm("Tem certeza que deseja remover esta presença?")) return;
+  async function removePresenca(docId, treinoId) {
+    if (!confirm("Remover presença?")) return;
     await deleteDoc(doc(db, "presencas", docId));
-    verPresencas(treinoId);
+    viewPresencas(treinoId);
   }
 
   return (
-    <div className="container" style={{ minHeight: "100vh", marginTop: 36 }}>
-      <div className="card" style={{ maxWidth: 700, width: "100%", margin: "0 auto" }}>
-        <h1 style={{ fontSize: "1.6rem", textAlign: "center", marginBottom: 24, color: "#2563eb", fontWeight: "bold" }}>
-          Painel de Presenças
-        </h1>
-        <ul style={{ listStyle: "none", padding: 0, width: "100%" }}>
-          {treinos.map((t) => (
-            <li key={t.id} className="card" style={{
-              background: "#f5f7fa",
-              borderRadius: 12,
-              padding: 18,
-              marginBottom: 16,
-              boxShadow: "0 1px 4px #0001"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>
-                  <b>{formatDateBR(t.dia)}</b> às <b>{t.hora}</b> — Vagas: <b>{t.vagas}</b>
-                </span>
+    <div className="container py-4">
+      <div className="card mx-auto" style={{ maxWidth: '750px' }}>
+        <div className="card-header bg-primary text-white">
+          <h3 className="mb-0">Painel de Presenças</h3>
+        </div>
+        <ul className="list-group list-group-flush">
+          {treinos.map(t => (
+            <li key={t.id} className="list-group-item">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{t.dia.split('-').reverse().join('/')}</strong> às <strong>{t.hora}</strong>
+                  <span className="ms-3 badge bg-secondary">Vagas: {t.vagas}</span>
+                </div>
                 <button
-                  className="button"
-                  style={{
-                    padding: "6px 20px",
-                    fontSize: 15,
-                    background: "#2563eb",
-                    color: "#fff"
-                  }}
-                  onClick={() => verPresencas(t.id)}
+                  className="btn btn-primary btn-sm"
+                  onClick={() => viewPresencas(t.id)}
                 >
                   Ver Detalhes
                 </button>
               </div>
-
-              {treinoSelecionado === t.id && presencas[t.id] && (
-                <div style={{
-                  marginTop: 14,
-                  background: "#fff",
-                  borderRadius: 8,
-                  padding: "16px 18px",
-                  display: "flex",
-                  gap: "32px",
-                  flexWrap: "wrap",
-                  boxShadow: "0 1px 6px #0001"
-                }}>
-                  <div style={{ flex: 1, minWidth: 160 }}>
-                    <b style={{ color: "#23a85e" }}>✔ Confirmados:</b>
-                    <ul style={{ margin: "10px 0", padding: 0 }}>
-                      {presencas[t.id].length === 0 && (
-                        <li style={{ color: "#aaa" }}>Ninguém confirmou ainda.</li>
-                      )}
-                      {presencas[t.id].map((p, idx) => (
-                        <li key={idx} style={{
-                          color: "#2a2",
-                          fontWeight: 500,
-                          padding: "3px 0",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          borderBottom: "1px solid #e8ecf3"
-                        }}>
-                          <span>{p.nome ? p.nome : p.email}</span>
-                          <button
-                            style={{
-                              marginLeft: 10,
-                              background: "#e44",
-                              color: "#fff",
-                              border: "none",
-                              borderRadius: 6,
-                              padding: "2px 12px",
-                              cursor: "pointer",
-                              fontSize: 13,
-                              transition: ".15s"
-                            }}
-                            onClick={() => removerPresenca(p._id, t.id)}
-                          >
-                            Remover
-                          </button>
-                        </li>
-                      ))}
+              {selected === t.id && (
+                <div className="row mt-3">
+                  <div className="col-md-6">
+                    <h5 className="text-success">Confirmados</h5>
+                    {loading && <div className="spinner-border text-success" role="status"><span className="visually-hidden">Carregando...</span></div>}
+                    <ul className="list-group">
+                      {(presencas[t.id] || []).length === 0
+                        ? <li className="list-group-item text-muted">Nenhuma presença.</li>
+                        : presencas[t.id].map(p => (
+                          <li key={p._id} className="list-group-item d-flex justify-content-between align-items-center">
+                            {p.nome || p.email}
+                            <button className="btn btn-danger btn-sm" onClick={() => removePresenca(p._id, t.id)}>Remover</button>
+                          </li>
+                        ))}
                     </ul>
                   </div>
-                  <div style={{ flex: 1, minWidth: 160 }}>
-                    <b style={{ color: "#d34545" }}>✘ Não confirmados:</b>
-                    <ul style={{ margin: "10px 0", padding: 0 }}>
+                  <div className="col-md-6">
+                    <h5 className="text-danger">Não Confirmados</h5>
+                    <ul className="list-group">
                       {alunos
-                        .filter(a =>
-                          !presencas[t.id].some(p =>
-                            (p.email || "").toLowerCase() === (a.email || "").toLowerCase()
-                          )
-                        )
-                        .map((a, idx) => (
-                          <li key={idx} style={{
-                            color: "#b33",
-                            fontWeight: 500,
-                            padding: "3px 0"
-                          }}>
-                            {a.nome ? a.nome : a.email}
-                          </li>
+                        .filter(a => !(presencas[t.id] || []).some(p => p.email.toLowerCase() === a.email.toLowerCase()))
+                        .map((a,i) => (
+                          <li key={i} className="list-group-item">{a.nome || a.email}</li>
                         ))}
                     </ul>
                   </div>
                 </div>
               )}
-              {loading && treinoSelecionado === t.id && (
-                <div style={{ textAlign: "center", color: "#888", marginTop: 10 }}>Carregando...</div>
-              )}
             </li>
           ))}
-          {treinos.length === 0 && (
-            <li style={{ color: "#aaa", textAlign: "center" }}>
-              Nenhum treino cadastrado ainda.
-            </li>
-          )}
+          {treinos.length === 0 && <li className="list-group-item text-center text-muted">Nenhum treino cadastrado.</li>}
         </ul>
       </div>
-      <style jsx>{`
-        @media (max-width: 700px) {
-          .card {
-            padding: 10px 3vw;
-          }
-        }
-        @media (max-width: 500px) {
-          .card {
-            padding: 5px 2vw;
-          }
-        }
-      `}</style>
     </div>
   );
 }

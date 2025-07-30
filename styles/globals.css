@@ -1,185 +1,86 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&display=swap');
-
-/* RESET E PALETA */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-
-
+/* ==========================================
+   Variáveis de cor da marca (extraídas do logo)
+   ========================================== */
 :root {
-  --color-primary: #f08a4b;
-  --color-secondary: #5b7dff;
-  --color-bg: #f5ede1;
-  --color-card: #fff;
-  --color-dark: #333;
-  --color-light: #fff;
-  --radius: 12px;
-  --shadow: 0 2px 12px rgba(0,0,0,0.05);
-  --font-heading: 'Montserrat', Arial, sans-serif;
-  --font-body: 'Open Sans', Arial, sans-serif;
+  --menu-bg: #0f172a;           /* fundo escuro */
+  --link-color: #f2932e;        /* laranja principal */
+  --link-hover-bg: rgba(242,147,46,0.1);
+  --link-active-bg: #15616d;    /* teal secundário */
+  --text-light: #fefefe;        /* texto claro */
+  --shadow: rgba(0, 0, 0, 0.15);
 }
 
-/* BODY E CONTAINER GERAL */
-body {
-  font-family: var(--font-body);
-  background: linear-gradient(135deg, #f5ede1 0%, #e5eafc 100%);
-  color: var(--color-dark);
-  min-height: 100vh;
-  line-height: 1.6;
+/* ==========================================
+   Classe para os títulos (bg-menu)
+   ========================================== */
+.bg-menu {
+  background-color: var(--menu-bg) !important;
+  color: var(--text-light) !important;
 }
 
-/* CONTAINER CENTRALIZADO */
-.container {
-  max-width: 700px;
-  margin: 36px auto 0 auto;
-  padding: 0 16px;
+/* ==========================================
+   Override de botões para usar sua paleta
+   ========================================== */
+
+/* Laranja principal onde era btn-primary, btn-success e btn-warning */
+.btn-primary,
+.btn-success,
+.btn-warning {
+  background-color: var(--link-color) !important;
+  border-color: var(--link-color) !important;
+  color: var(--text-light) !important;
+}
+.btn-primary:hover,
+.btn-success:hover,
+.btn-warning:hover {
+  background-color: var(--link-hover-bg) !important;
+  border-color: var(--link-hover-bg) !important;
 }
 
-/* CARD USO GERAL */
-.card {
-  background: var(--color-card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 28px 24px;
-  margin-bottom: 18px;
+/* Teal secundário onde era btn-secondary */
+.btn-secondary {
+  background-color: var(--link-active-bg) !important;
+  border-color: var(--link-active-bg) !important;
+  color: var(--text-light) !important;
+}
+.btn-secondary:hover {
+  background-color: var(--link-active-bg) !important;
+  border-color: var(--link-active-bg) !important;
 }
 
-@media (max-width: 600px) {
-  .container { padding: 0 4px; }
-  .card { padding: 16px 8px; }
+/* Mantém o vermelho padrão para btn-danger */
+.btn-danger {
+  /* opcional: personalize aqui se quiser outro tom */
 }
 
-/* TITULOS */
-h1, h2, h3 {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 18px;
-}
-h2 { font-size: 1.25rem; margin-top: 24px; }
-h1 { font-size: 2rem; }
-h3 { font-size: 1.1rem; }
+/* ==========================================
+   Títulos e links padrão
+   ========================================== */
 
-/* INPUTS E TEXTAREA */
-input, textarea, select {
-  font-family: inherit;
-  font-size: 1rem;
-  background: #f7f8fa;
-  color: var(--color-dark);
-  border: 1.5px solid #e7eaf0;
-  border-radius: var(--radius);
-  padding: 9px 12px;
-  margin-bottom: 10px;
-  width: 100%;
-  outline: none;
-  transition: border-color 0.2s;
-}
-input:focus, textarea:focus, select:focus {
-  border-color: var(--color-primary);
+h1, h2, h3, h4, h5, h6 {
+  color: var(--link-color) !important;
 }
 
-/* BOTÕES */
-.button,
-button, 
-.login-btn {
-  background: var(--color-primary);
-  color: var(--color-light);
-  border: none;
-  padding: 10px 20px;
-  border-radius: var(--radius);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background .2s, box-shadow .2s;
-  box-shadow: 0 2px 8px rgba(240,138,75,0.09);
-  margin-top: 4px;
+a {
+  color: var(--link-color) !important;
 }
-.button:active,
-button:active,
-.login-btn:active {
-  background: #e77929;
-}
-.button[disabled],
-button[disabled] {
-  opacity: .7;
-  cursor: not-allowed;
+a:hover {
+  color: var(--link-active-bg) !important;
 }
 
-.button.secondary {
-  background: var(--color-secondary);
+/* ==========================================
+   Outros overrides úteis
+   ========================================== */
+
+/* Alerta primário (azul) vira laranja */
+.alert-primary {
+  background-color: var(--link-color) !important;
+  border-color: var(--link-color) !important;
+  color: var(--text-light) !important;
 }
 
-.button.danger {
-  background: #e44;
-}
-
-/* LISTA DE ITENS */
-ul, ol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-/* ALINHAMENTO FLEX PADRÃO */
-.flex {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-/* MENSAGENS DE ALERTA */
-.msg-success {
-  color: #1e7d34;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-.msg-error {
-  color: #d10000;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-/* RESPONSIVO */
-@media (max-width: 420px) {
-  h1 { font-size: 1.28rem; }
-  .card { padding: 8px 4px; }
-}
-
-/* ROLAGEM */
-::-webkit-scrollbar { width: 8px; background: #eee;}
-::-webkit-scrollbar-thumb { background: #e4e4e4; border-radius: 6px; }
-
-
-.button.success, .login-btn.success {
-  background: #22bb55;
-  color: #fff;
-}
-.button.success:hover, .login-btn.success:hover {
-  background: #1a9341;
-}
-
-.button.danger {
-  background: #e44;
-  color: #fff;
-}
-.button.danger:hover {
-  background: #c10000;
-}
-
-.button.warning {
-  background: #FFA502;
-  color: #fff;
-}
-.button.warning:hover {
-  background: #cc8400;
+/* Cards, navbar, etc */
+.card,
+.navbar {
+  box-shadow: 0 2px 12px var(--shadow) !important;
 }

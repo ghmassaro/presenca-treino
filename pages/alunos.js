@@ -36,6 +36,7 @@ export default function Alunos() {
   const [email, setEmail] = useState("");
   const [pagamento, setPagamento] = useState("");
   const [telefone, setTelefone] = useState("");
+  const [pontuacao, setPontuacao] = useState(0);
   const [alunos, setAlunos] = useState([]);
   const [msg, setMsg] = useState("");
   const [editId, setEditId] = useState(null);
@@ -43,6 +44,7 @@ export default function Alunos() {
   const [editEmail, setEditEmail] = useState("");
   const [editPagamento, setEditPagamento] = useState("");
   const [editTelefone, setEditTelefone] = useState("");
+  const [editPontuacao, setEditPontuacao] = useState(0);
 
   useEffect(() => {
     async function fetchAlunos() {
@@ -60,9 +62,10 @@ export default function Alunos() {
       email,
       pagamento,
       telefone,
+      pontuacao: Number(pontuacao),
     });
     setMsg("Aluno cadastrado!");
-    setNome(""); setEmail(""); setPagamento(""); setTelefone("");
+    setNome(""); setEmail(""); setPagamento(""); setTelefone(""); setPontuacao(0);
     setTimeout(() => setMsg(""), 1500);
   }
 
@@ -78,6 +81,7 @@ export default function Alunos() {
     setEditEmail(a.email);
     setEditPagamento(a.pagamento);
     setEditTelefone(a.telefone);
+    setEditPontuacao(a.pontuacao || 0);
   }
 
   async function salvarEdicao(e) {
@@ -87,6 +91,7 @@ export default function Alunos() {
       email: editEmail,
       pagamento: editPagamento,
       telefone: editTelefone,
+      pontuacao: Number(editPontuacao),
     });
     setMsg("Aluno editado!");
     setEditId(null);
@@ -142,6 +147,15 @@ export default function Alunos() {
               onChange={e => setTelefone(e.target.value)}
             />
           </div>
+          <div className="col-12 col-md-6">
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Pontuação"
+              value={pontuacao}
+              onChange={e => setPontuacao(e.target.value)}
+            />
+          </div>
           <div className="col-12">
             <button type="submit" className="btn btn-primary w-100">
               Cadastrar
@@ -150,6 +164,58 @@ export default function Alunos() {
         </form>
 
         {msg && <div className="alert alert-secondary text-center">{msg}</div>}
+
+        {editId && (
+          <form onSubmit={salvarEdicao} className="row g-3 mb-4">
+            <div className="col-12 col-md-6">
+              <input
+                type="text"
+                className="form-control"
+                value={editNome}
+                onChange={e => setEditNome(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-12 col-md-6">
+              <input
+                type="email"
+                className="form-control"
+                value={editEmail}
+                onChange={e => setEditEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-12 col-md-6">
+              <input
+                type="date"
+                className="form-control"
+                value={editPagamento}
+                onChange={e => setEditPagamento(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-12 col-md-6">
+              <input
+                type="tel"
+                className="form-control"
+                value={editTelefone}
+                onChange={e => setEditTelefone(e.target.value)}
+              />
+            </div>
+            <div className="col-12 col-md-6">
+              <input
+                type="number"
+                className="form-control"
+                value={editPontuacao}
+                onChange={e => setEditPontuacao(e.target.value)}
+              />
+            </div>
+            <div className="col-12 d-flex gap-2">
+              <button type="submit" className="btn btn-primary flex-fill">Salvar</button>
+              <button type="button" className="btn btn-secondary flex-fill" onClick={() => setEditId(null)}>Cancelar</button>
+            </div>
+          </form>
+        )}
 
         {/* Lista */}
         <h5 className="text-center mb-3" style={{ color: 'var(--link-color)' }}>
@@ -166,6 +232,9 @@ export default function Alunos() {
                 </span><br />
                 <span className="text-muted">
                   {a.telefone || 'Sem telefone'}
+                </span><br />
+                <span className="text-muted">
+                  Pontuação: {a.pontuacao || 0}
                 </span>
               </div>
               <div className="d-flex gap-2">

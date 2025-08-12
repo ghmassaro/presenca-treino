@@ -11,7 +11,7 @@ export default function Login() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push("/admin");
+      router.push("/painel-professor");
     }
   }, [user, loading, router]);
 

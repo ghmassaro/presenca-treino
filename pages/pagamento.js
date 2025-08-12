@@ -56,19 +56,31 @@ export default function Pagamento() {
   async function handleUpload(e) {
     e.preventDefault();
     if (!comprovante) return;
-    await updateDoc(doc(db, "alunos", alunoId), {
-      comprovante: comprovante.name || "Enviado",
-      status: "Aguardando Confirmação"
-    });
-    setUploadMsg("Comprovante enviado!");
-    buscarDados(user);
-    setTimeout(() => setUploadMsg(""), 1500);
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      await updateDoc(doc(db, "alunos", alunoId), {
+        comprovante: reader.result,
+        status: "Aguardando Confirmação",
+        ativo: false,
+      });
+      setUploadMsg("Comprovante enviado!");
+      buscarDados(user);
+      setTimeout(() => setUploadMsg(""), 1500);
+    };
+    reader.readAsDataURL(comprovante);
   }
 
-  async function handleStatus(id, novoStatus) {
-    await updateDoc(doc(db, "alunos", id), { status: novoStatus });
+  async function aprovarPagamento(id) {
+    await updateDoc(doc(db, "alunos", id), { status: "Pago", ativo: true });
     fetchAlunos();
-    setUploadMsg("Status atualizado!");
+    setUploadMsg("Pagamento aprovado!");
+    setTimeout(() => setUploadMsg(""), 1000);
+  }
+
+  async function recusarPagamento(id) {
+    await updateDoc(doc(db, "alunos", id), { status: "Recusado", ativo: false });
+    fetchAlunos();
+    setUploadMsg("Pagamento recusado!");
     setTimeout(() => setUploadMsg(""), 1000);
   }
 
@@ -112,16 +124,17 @@ export default function Pagamento() {
                     <p><strong>Vencimento:</strong> {formatDateBR(al.pagamento)}</p>
                     <p><strong>Chave PIX:</strong> {al.pix || "Sem chave"}</p>
                     <p>
-                      <strong>Status:</strong> {" "}
-                      <span className={`badge ${al.status === "Pago" ? "bg-success" : al.status === "Aguardando Confirmação" ? "bg-warning text-dark" : "bg-danger"}`}>{al.status || "Pendente"}</span>
+                      <strong>Status:</strong>{" "}
+                      <span className={`badge ${al.status === "Pago" ? "bg-success" : al.status === "Aguardando Confirmação" ? "bg-warning text-dark" : al.status === "Recusado" ? "bg-danger" : "bg-secondary"}`}>{al.status || "Pendente"}</span>
                     </p>
-                    {al.comprovante && <p><i>Comprovante:</i> {al.comprovante}</p>}
+                    {al.comprovante && (
+                      <div className="mb-2">
+                        <img src={al.comprovante} alt="Comprovante" className="img-fluid" />
+                      </div>
+                    )}
                     <div className="d-flex flex-wrap gap-2">
-                      <select className="form-select w-auto" value={al.status || "Pendente"} onChange={e => handleStatus(al.id, e.target.value)}>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Aguardando Confirmação">Aguardando Confirmação</option>
-                        <option value="Pago">Pago</option>
-                      </select>
+                      <button className="btn btn-success" onClick={() => aprovarPagamento(al.id)}>Aprovar</button>
+                      <button className="btn btn-danger" onClick={() => recusarPagamento(al.id)}>Recusar</button>
                       <button className={`btn ${editId === al.id ? "btn-secondary" : "btn-primary"}`} onClick={() => editId === al.id ? setEditId(null) : startEdit(al)}>
                         {editId === al.id ? "Cancelar" : "Editar dados"}
                       </button>
@@ -158,8 +171,12 @@ export default function Pagamento() {
                   <p><strong>Aulas/mês:</strong> {dados.vezes || "1x"}</p>
                   <p><strong>Vencimento:</strong> {formatDateBR(dados.pagamento)}</p>
                   <p><strong>Chave PIX:</strong> {dados.pix || "Sem chave"}</p>
-                  <p><strong>Status:</strong> <span className={`badge ${dados.status === "Pago" ? "bg-success" : dados.status === "Aguardando Confirmação" ? "bg-warning text-dark" : "bg-danger"}`}>{dados.status || "Pendente"}</span></p>
-                  {dados.comprovante && <p><i>Comprovante:</i> {dados.comprovante}</p>}
+                  <p><strong>Status:</strong> <span className={`badge ${dados.status === "Pago" ? "bg-success" : dados.status === "Aguardando Confirmação" ? "bg-warning text-dark" : dados.status === "Recusado" ? "bg-danger" : "bg-secondary"}`}>{dados.status || "Pendente"}</span></p>
+                  {dados.comprovante && (
+                    <div className="mb-2">
+                      <img src={dados.comprovante} alt="Comprovante enviado" className="img-fluid" />
+                    </div>
+                  )}
                   <form onSubmit={handleUpload} className="mt-3">
                     <div className="mb-2">
                       <label className="form-label">Enviar comprovante:</label>

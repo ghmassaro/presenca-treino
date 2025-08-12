@@ -21,7 +21,7 @@ function formatDateBR(dateString) {
   return `${day}/${month}/${year}`;
 }
 
-export default function Admin() {
+export default function PainelProfessor() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
 

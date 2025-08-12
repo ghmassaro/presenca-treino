@@ -90,9 +90,9 @@ export default function Index() {
 
   return (
     <div className="container py-4">
-      <div className="mx-auto" style={{ maxWidth: '600px' }}>
+      <h1 className="text-center text-primary mb-5">Agenda de Treinos</h1>
 
-        {/* Título com fundo do menu */}
+      <section className="mx-auto" style={{ maxWidth: '600px' }}>
         <h2 className="bg-menu text-light text-center p-3 rounded mb-4">
           Próximos Treinos
         </h2>
@@ -135,9 +135,10 @@ export default function Index() {
             </li>
           ))}
         </ul>
+      </section>
 
-        {/* Título Realizados */}
-        <h2 className="bg-menu text-light text-center p-3 rounded mt-5 mb-4">
+      <section className="mx-auto mt-5" style={{ maxWidth: '600px' }}>
+        <h2 className="bg-menu text-light text-center p-3 rounded mb-4">
           Treinos Realizados
         </h2>
         <ul className="list-unstyled">
@@ -162,7 +163,7 @@ export default function Index() {
             </li>
           ))}
         </ul>
-      </div>
+      </section>
     </div>
   );
 }

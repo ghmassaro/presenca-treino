@@ -27,11 +27,10 @@ export default function Menu() {
   };
 
   const pages = [
-    { name: 'Início', path: '/' },
-    { name: 'Admin', path: '/admin' },
+    { name: 'Agenda', path: '/' },
+    { name: 'Painel do Professor', path: '/painel-professor' },
     { name: 'Alunos', path: '/alunos' },
     { name: 'Perfil', path: '/perfil' },
-    { name: 'Treinos', path: '/treinos' },
     { name: 'Meus Treinos', path: '/meus-treinos' },
     { name: 'Ranking', path: '/ranking' },
     { name: 'Painel', path: '/painel' },

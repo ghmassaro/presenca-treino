@@ -95,6 +95,16 @@
   box-shadow: 0 2px 12px var(--shadow);
 }
 
+.mobileToggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--link-color);
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+
 @media (max-width: 768px) {
   .menuBar {
     position: fixed;
@@ -105,9 +115,24 @@
     padding: 12px;
     height: auto;
   }
+  .mobileToggle {
+    display: block;
+    align-self: flex-end;
+  }
   .links {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    white-space: nowrap;
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+  }
+  .links.open {
+    display: flex !important;
+  }
+  .logoutBtn {
+    display: none;
+    width: 100%;
+  }
+  .logoutBtn.open {
+    display: block !important;
   }
 }

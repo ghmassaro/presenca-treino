@@ -8,6 +8,7 @@ export default function Menu() {
   const router = useRouter();
   const [show, setShow] = useState(true);
   const [lastY, setLastY] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   // Hide on scroll down, show on scroll up
   useEffect(() => {
@@ -42,7 +43,13 @@ export default function Menu() {
         <Link href="/" className={styles.logoArea}>
           <img src="/img/logo.png" alt="Logo" className={styles.logo} />
         </Link>
-        <ul className={styles.links}>
+        <button
+          className={styles.mobileToggle}
+          onClick={() => setMobileOpen(!mobileOpen)}
+        >
+          ☰
+        </button>
+        <ul className={`${styles.links} ${mobileOpen ? styles.open : ''}`}>
           {pages.map(p => {
             const active = router.pathname === p.path;
             return (
@@ -50,6 +57,7 @@ export default function Menu() {
                 <Link
                   href={p.path}
                   className={`${styles.link} ${active ? styles.linkActive : ''}`}
+                  onClick={() => setMobileOpen(false)}
                 >
                   {p.name}
                 </Link>
@@ -57,7 +65,10 @@ export default function Menu() {
             );
           })}
         </ul>
-        <button className={styles.logoutBtn} onClick={logout}>
+        <button
+          className={`${styles.logoutBtn} ${mobileOpen ? styles.open : ''}`}
+          onClick={logout}
+        >
           Sair
         </button>
       </div>

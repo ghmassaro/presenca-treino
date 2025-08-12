@@ -1,5 +1,5 @@
 /* Fundo suave */
-.login-bg {
+.loginBg {
   min-height: 100vh;
   background: linear-gradient(120deg, #f2f7fd 0%, #e8efff 100%);
   display: flex;
@@ -8,7 +8,7 @@
 }
 
 /* Card centralizado e responsivo */
-.login-card {
+.loginCard {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 2px 12px 0 #b6c4dd33;
@@ -22,8 +22,17 @@
   align-items: center;
 }
 
+.loginLogo {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 18px;
+  border: 2px solid #f08a4b;
+}
+
 /* Títulos */
-.login-title {
+.loginTitle {
   font-size: 2rem;
   font-weight: bold;
   text-align: center;
@@ -32,14 +41,14 @@
   letter-spacing: .5px;
 }
 
-.login-desc {
+.loginDesc {
   color: #5f6f86;
   text-align: center;
   margin-bottom: 16px;
 }
 
 /* Botão padrão */
-.login-btn {
+.loginBtn {
   background: linear-gradient(90deg, #4973e6, #2b59c3);
   color: #fff;
   border: none;
@@ -52,66 +61,39 @@
   transition: background 0.18s, box-shadow 0.18s;
   box-shadow: 0 2px 10px 0 #8ea8d933;
 }
-.login-btn:hover, .login-btn:focus {
+.loginBtn:hover, .loginBtn:focus {
   background: #23408e;
   color: #fff;
   outline: none;
 }
 
-/* Inputs */
-input[type="text"], input[type="email"], input[type="number"], input[type="date"], input[type="time"] {
-  border: 1px solid #bdd1f6;
-  background: #f9fbfd;
-  border-radius: 7px;
-  padding: 10px 10px;
-  font-size: 1rem;
-  margin-bottom: 8px;
-  width: 100%;
-  transition: border 0.18s;
-}
-input:focus {
-  border: 1.5px solid #4973e6;
-  background: #f1f5fa;
-  outline: none;
-}
-
 /* Responsividade extra */
 @media (max-width: 700px) {
-  .login-card {
+  .loginCard {
     padding: 22px 10px;
     min-width: unset;
     max-width: 99vw;
   }
-  .login-title {
+  .loginTitle {
     font-size: 1.45rem;
   }
 }
 
 @media (max-width: 400px) {
-  .login-card {
+  .loginCard {
     padding: 10px 3vw;
     min-width: unset;
   }
-  .login-title {
+  .loginTitle {
     font-size: 1.09rem;
   }
 }
 
 /* Listas bonitas (painel e admin) */
-.login-card ul {
+.loginCard ul {
   padding-left: 0 !important;
   width: 100%;
 }
-.login-card li {
+.loginCard li {
   font-size: 1rem;
-}
-
-/* Remover outline azul dos botões no mobile */
-button, input, select, textarea {
-  outline: none;
-}
-
-/* Para melhor touch nos botões no mobile */
-button, .login-btn {
-  -webkit-tap-highlight-color: transparent;
 }

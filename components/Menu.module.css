@@ -107,7 +107,7 @@
 
 @media (max-width: 768px) {
   .menuBar {
-    position: fixed;
+    position: sticky;
   }
   .menuInner {
     flex-direction: column;

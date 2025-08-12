@@ -33,6 +33,7 @@ export default function Menu() {
     { name: 'Perfil', path: '/perfil' },
     { name: 'Treinos', path: '/treinos' },
     { name: 'Meus Treinos', path: '/meus-treinos' },
+    { name: 'Ranking', path: '/ranking' },
     { name: 'Painel', path: '/painel' },
     { name: 'Pagamento', path: '/pagamento' },
   ];

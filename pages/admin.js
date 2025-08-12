@@ -210,8 +210,18 @@ export default function Admin() {
                   <div className="small text-muted mt-1">{t.metodologia}</div>
                 </div>
                 <div className="d-flex gap-2">
-                  <button className="btn btn-secondary btn-sm">Editar</button>
-                  <button className="btn btn-danger btn-sm">Remover</button>
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => startEdit(t)}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => removerTreino(t.id)}
+                  >
+                    Remover
+                  </button>
                 </div>
               </li>
             )

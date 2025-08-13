@@ -6,6 +6,7 @@ import {
   getDocs,
   query,
   orderBy,
+  where,
   deleteDoc,
   doc,
   updateDoc,
@@ -45,12 +46,17 @@ export default function PainelProfessor() {
 
   useEffect(() => {
     async function fetchTreinos() {
-      const q = query(collection(db, 'treinos'), orderBy('dia'));
+      if (!user) return;
+      const q = query(
+        collection(db, 'treinos'),
+        where('professor', '==', user.email),
+        orderBy('dia')
+      );
       const snap = await getDocs(q);
       setTreinos(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     }
     fetchTreinos();
-  }, [msg]);
+  }, [msg, user]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -59,6 +65,7 @@ export default function PainelProfessor() {
       hora,
       vagas: Number(vagas),
       metodologia,
+      professor: user.email,
     });
     setMsg('Treino cadastrado!');
     setDia(''); setHora(''); setVagas(6); setMetodologia('');

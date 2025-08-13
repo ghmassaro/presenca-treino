@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { db } from "@/lib/firebaseConfig";
+import { db, auth } from "@/lib/firebaseConfig";
 import {
   collection,
   getDocs,
@@ -9,6 +9,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Painel() {
   const [treinos, setTreinos] = useState([]);
@@ -16,15 +17,21 @@ export default function Painel() {
   const [alunos, setAlunos] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [user] = useAuthState(auth);
 
   useEffect(() => {
     async function fetchTreinos() {
-      const q = query(collection(db, "treinos"), orderBy("dia"));
+      if (!user) return;
+      const q = query(
+        collection(db, "treinos"),
+        where("professor", "==", user.email),
+        orderBy("dia")
+      );
       const snap = await getDocs(q);
       setTreinos(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     }
     fetchTreinos();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     async function fetchAlunos() {
@@ -49,6 +56,8 @@ export default function Painel() {
     await deleteDoc(doc(db, "presencas", docId));
     viewPresencas(treinoId);
   }
+
+  if (!user) return null;
 
   return (
     <div className="container py-4">
@@ -91,7 +100,12 @@ export default function Painel() {
                     <h5 className="text-danger">Não Confirmados</h5>
                     <ul className="list-group">
                       {alunos
-                        .filter(a => !(presencas[t.id] || []).some(p => p.email.toLowerCase() === a.email.toLowerCase()))
+                        .filter(a => {
+                          const semana = new Date(t.dia).toLocaleDateString('pt-BR', { weekday: 'long' });
+                          const permitido = a.diasTreino ? a.diasTreino.toLowerCase().includes(semana.toLowerCase()) : true;
+                          const jaConfirmado = (presencas[t.id] || []).some(p => p.email.toLowerCase() === a.email.toLowerCase());
+                          return permitido && !jaConfirmado;
+                        })
                         .map((a,i) => (
                           <li key={i} className="list-group-item">{a.nome || a.email}</li>
                         ))}

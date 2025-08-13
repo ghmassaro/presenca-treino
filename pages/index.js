@@ -20,10 +20,15 @@ function isFuture(dateStr) {
   return treinoDate >= today;
 }
 
+function dayOfWeek(dateStr) {
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('pt-BR', { weekday: 'short' });
+}
+
 export default function Index() {
   const [treinos, setTreinos] = useState([]);
   const [presencas, setPresencas] = useState([]);
   const [user] = useAuthState(auth);
+  const [month, setMonth] = useState(new Date().getMonth());
 
   useEffect(() => {
     async function fetchTreinos() {
@@ -85,12 +90,31 @@ export default function Index() {
     }
   }
 
-  const proximos = treinos.filter(t => isFuture(t.dia));
-  const realizados = treinos.filter(t => !isFuture(t.dia));
+  const filtrados = treinos.filter(t => {
+    if (month === 'all') return true;
+    return new Date(t.dia + 'T00:00:00').getMonth() === month;
+  });
+  const proximos = filtrados.filter(t => isFuture(t.dia));
+  const realizados = filtrados.filter(t => !isFuture(t.dia));
 
   return (
     <div className="container py-4">
       <h1 className="text-center text-primary mb-5">Agenda de Treinos</h1>
+      <div className="mb-4 text-center">
+        <select
+          className="form-select d-inline w-auto"
+          value={month}
+          onChange={e => {
+            const val = e.target.value;
+            setMonth(val === 'all' ? 'all' : Number(val));
+          }}
+        >
+          <option value="all">Todos os meses</option>
+          {Array.from({ length: 12 }, (_, i) => (
+            <option key={i} value={i}>{new Date(2020, i).toLocaleDateString('pt-BR', { month: 'long' })}</option>
+          ))}
+        </select>
+      </div>
 
       <section className="mx-auto" style={{ maxWidth: '600px' }}>
         <h2 className="bg-menu text-light text-center p-3 rounded mb-4">
@@ -105,7 +129,7 @@ export default function Index() {
               <div className="card-body d-flex flex-column flex-md-row align-items-start justify-content-between gap-3">
                 <div>
                   <h5 className="text-secondary mb-1">
-                    {formatDateBR(t.dia)} às {t.hora}
+                    {formatDateBR(t.dia)} ({dayOfWeek(t.dia)}) às {t.hora}
                   </h5>
                   <p className="mb-1">
                     Confirmados: <strong>{t.confirmados}</strong> / {t.vagas}
@@ -150,7 +174,7 @@ export default function Index() {
               <div className="card-body d-flex justify-content-between align-items-center">
                 <div>
                   <h5 className="text-muted mb-1">
-                    {formatDateBR(t.dia)} às {t.hora}
+                    {formatDateBR(t.dia)} ({dayOfWeek(t.dia)}) às {t.hora}
                   </h5>
                   <p className="mb-0">
                     Confirmados: <strong>{t.confirmados}</strong> / {t.vagas}

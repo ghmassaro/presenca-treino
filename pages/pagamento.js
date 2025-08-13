@@ -91,6 +91,7 @@ export default function Pagamento() {
       vezes: al.vezes || "",
       pagamento: al.pagamento || "",
       pix: al.pix || "",
+      frequencia: al.frequencia || "Mensal",
     });
   }
 
@@ -121,6 +122,7 @@ export default function Pagamento() {
                     <h5 className="card-title">{al.nome} <small className="text-muted">({al.email})</small></h5>
                     <p><strong>Valor:</strong> R$ {al.valor || "80,00"}</p>
                     <p><strong>Aulas/mês:</strong> {al.vezes || "1x"}</p>
+                    <p><strong>Frequência:</strong> {al.frequencia || "Mensal"}</p>
                     <p><strong>Vencimento:</strong> {formatDateBR(al.pagamento)}</p>
                     <p><strong>Chave PIX:</strong> {al.pix || "Sem chave"}</p>
                     <p>
@@ -154,6 +156,13 @@ export default function Pagamento() {
                           <div className="col">
                             <input className="form-control" type="text" placeholder="PIX" value={editFields.pix} onChange={e => setEditFields(f => ({ ...f, pix: e.target.value }))} />
                           </div>
+                          <div className="col">
+                            <select className="form-control" value={editFields.frequencia} onChange={e => setEditFields(f => ({ ...f, frequencia: e.target.value }))}>
+                              <option value="Mensal">Mensal</option>
+                              <option value="Semanal">Semanal</option>
+                              <option value="Anual">Anual</option>
+                            </select>
+                          </div>
                         </div>
                         <button type="submit" className="btn btn-success mt-3">Salvar</button>
                       </form>
@@ -169,6 +178,7 @@ export default function Pagamento() {
                   <h5 className="card-title text-primary">Olá, {dados.nome}!</h5>
                   <p><strong>Valor:</strong> R$ {dados.valor || "80,00"}</p>
                   <p><strong>Aulas/mês:</strong> {dados.vezes || "1x"}</p>
+                  <p><strong>Frequência:</strong> {dados.frequencia || "Mensal"}</p>
                   <p><strong>Vencimento:</strong> {formatDateBR(dados.pagamento)}</p>
                   <p><strong>Chave PIX:</strong> {dados.pix || "Sem chave"}</p>
                   <p><strong>Status:</strong> <span className={`badge ${dados.status === "Pago" ? "bg-success" : dados.status === "Aguardando Confirmação" ? "bg-warning text-dark" : dados.status === "Recusado" ? "bg-danger" : "bg-secondary"}`}>{dados.status || "Pendente"}</span></p>

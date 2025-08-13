@@ -37,6 +37,8 @@ export default function Alunos() {
   const [pagamento, setPagamento] = useState("");
   const [telefone, setTelefone] = useState("");
   const [pontuacao, setPontuacao] = useState(0);
+  const [diasTreino, setDiasTreino] = useState("");
+  const [horaTreino, setHoraTreino] = useState("");
   const [alunos, setAlunos] = useState([]);
   const [msg, setMsg] = useState("");
   const [editId, setEditId] = useState(null);
@@ -45,6 +47,8 @@ export default function Alunos() {
   const [editPagamento, setEditPagamento] = useState("");
   const [editTelefone, setEditTelefone] = useState("");
   const [editPontuacao, setEditPontuacao] = useState(0);
+  const [editDiasTreino, setEditDiasTreino] = useState("");
+  const [editHoraTreino, setEditHoraTreino] = useState("");
 
   useEffect(() => {
     async function fetchAlunos() {
@@ -63,9 +67,11 @@ export default function Alunos() {
       pagamento,
       telefone,
       pontuacao: Number(pontuacao),
+      diasTreino,
+      horaTreino,
     });
     setMsg("Aluno cadastrado!");
-    setNome(""); setEmail(""); setPagamento(""); setTelefone(""); setPontuacao(0);
+    setNome(""); setEmail(""); setPagamento(""); setTelefone(""); setPontuacao(0); setDiasTreino(""); setHoraTreino("");
     setTimeout(() => setMsg(""), 1500);
   }
 
@@ -82,6 +88,8 @@ export default function Alunos() {
     setEditPagamento(a.pagamento);
     setEditTelefone(a.telefone);
     setEditPontuacao(a.pontuacao || 0);
+    setEditDiasTreino(a.diasTreino || "");
+    setEditHoraTreino(a.horaTreino || "");
   }
 
   async function salvarEdicao(e) {
@@ -92,6 +100,8 @@ export default function Alunos() {
       pagamento: editPagamento,
       telefone: editTelefone,
       pontuacao: Number(editPontuacao),
+      diasTreino: editDiasTreino,
+      horaTreino: editHoraTreino,
     });
     setMsg("Aluno editado!");
     setEditId(null);
@@ -145,6 +155,24 @@ export default function Alunos() {
               placeholder="Telefone do aluno"
               value={telefone}
               onChange={e => setTelefone(e.target.value)}
+            />
+          </div>
+          <div className="col-12 col-md-6">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Dias de treino (ex: Segunda,Terça)"
+              value={diasTreino}
+              onChange={e => setDiasTreino(e.target.value)}
+            />
+          </div>
+          <div className="col-12 col-md-6">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Horário de treino (ex: 18:00)"
+              value={horaTreino}
+              onChange={e => setHoraTreino(e.target.value)}
             />
           </div>
           <div className="col-12 col-md-6">
@@ -204,6 +232,24 @@ export default function Alunos() {
             </div>
             <div className="col-12 col-md-6">
               <input
+                type="text"
+                className="form-control"
+                placeholder="Dias de treino"
+                value={editDiasTreino}
+                onChange={e => setEditDiasTreino(e.target.value)}
+              />
+            </div>
+            <div className="col-12 col-md-6">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Horário de treino"
+                value={editHoraTreino}
+                onChange={e => setEditHoraTreino(e.target.value)}
+              />
+            </div>
+            <div className="col-12 col-md-6">
+              <input
                 type="number"
                 className="form-control"
                 value={editPontuacao}
@@ -232,6 +278,12 @@ export default function Alunos() {
                 </span><br />
                 <span className="text-muted">
                   {a.telefone || 'Sem telefone'}
+                </span><br />
+                <span className="text-muted">
+                  Dias: {a.diasTreino || 'Não informado'}
+                </span><br />
+                <span className="text-muted">
+                  Horário: {a.horaTreino || 'Não informado'}
                 </span><br />
                 <span className="text-muted">
                   Pontuação: {a.pontuacao || 0}

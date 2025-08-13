@@ -3,12 +3,15 @@ import { useRouter } from 'next/router';
 import { auth } from '@/lib/firebaseConfig';
 import styles from './Menu.module.css';
 import { useState, useEffect } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 export default function Menu() {
   const router = useRouter();
   const [show, setShow] = useState(true);
   const [lastY, setLastY] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user] = useAuthState(auth);
+  const ADMIN_EMAIL = 'gustavohmassaro@gmail.com';
 
   // Hide on scroll down, show on scroll up
   useEffect(() => {
@@ -26,16 +29,23 @@ export default function Menu() {
     router.push('/login');
   };
 
-  const pages = [
+  const basePages = [
     { name: 'Agenda', path: '/' },
-    { name: 'Painel do Professor', path: '/painel-professor' },
-    { name: 'Alunos', path: '/alunos' },
     { name: 'Perfil', path: '/perfil' },
     { name: 'Meus Treinos', path: '/meus-treinos' },
     { name: 'Ranking', path: '/ranking' },
+  ];
+
+  const adminPages = [
+    { name: 'Painel do Professor', path: '/painel-professor' },
+    { name: 'Alunos', path: '/alunos' },
     { name: 'Painel', path: '/painel' },
     { name: 'Pagamento', path: '/pagamento' },
   ];
+
+  const pages = user && user.email === ADMIN_EMAIL
+    ? [...basePages, ...adminPages]
+    : basePages;
 
   return (
     <nav className={`${styles.menuBar} ${show ? '' : styles.hidden}`}>
